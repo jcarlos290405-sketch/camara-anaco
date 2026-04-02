@@ -224,7 +224,7 @@ def enviar_correo_solicitud(solicitud, documentos=None):
 
         # Send email
         try:
-            with smtplib.SMTP(app.config['SMTP_SERVER'], app.config['SMTP_PORT']) as server:
+            with smtplib.SMTP(app.config['SMTP_SERVER'], app.config['SMTP_PORT'], timeout=10) as server:
                 server.starttls()
                 server.login(app.config['SMTP_USER'], app.config['SMTP_PASSWORD'])
                 server.send_message(msg)
@@ -234,11 +234,6 @@ def enviar_correo_solicitud(solicitud, documentos=None):
             import traceback
             traceback.print_exc()
             return False
-    except Exception as e:
-        print(f"Error general en enviar_correo_solicitud: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return False
 
 
 def generate_qr_code(data, filename):

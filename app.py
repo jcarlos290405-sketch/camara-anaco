@@ -42,30 +42,30 @@ def enviar_correo_solicitud(solicitud, documentos=None):
     msg['To'] = app.config['SMTP_TO_EMAIL']
 
     # HTML body
-    html_content = """
+    html_content = f"""
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f9fafb; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(135deg, #1E3A5F 0%, #0A4B6E 100%); color: white; padding: 30px; text-align: center; }
-        .header h1 { margin: 0; font-size: 24px; }
-        .header h2 { margin: 10px 0 0; font-size: 16px; font-weight: normal; opacity: 0.9; }
-        .content { padding: 30px; }
-        .info-section { margin-bottom: 25px; }
-        .info-section h3 { color: #1E3A5F; border-bottom: 2px solid #D4AF37; padding-bottom: 8px; margin-bottom: 15px; font-size: 16px; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .info-item { background: #f3f4f6; padding: 12px; border-radius: 8px; }
-        .info-item label { display: block; color: #6b7280; font-size: 12px; margin-bottom: 4px; }
-        .info-item value { color: #1f2937; font-weight: 600; }
-        .estado { display: inline-block; padding: 6px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; }
-        .estado-pendiente { background: #fef3c7; color: #d97706; }
-        .miembros { margin-top: 15px; }
-        .miembro { background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #D4AF37; }
-        .footer { background: #f3f4f6; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; }
-        .btn { display: inline-block; background: #1E3A5F; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        body {{ font-family: 'Segoe UI', Arial, sans-serif; background-color: #f9fafb; margin: 0; padding: 20px; }}
+        .container {{ max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
+        .header {{ background: linear-gradient(135deg, #1E3A5F 0%, #0A4B6E 100%); color: white; padding: 30px; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 24px; }}
+        .header h2 {{ margin: 10px 0 0; font-size: 16px; font-weight: normal; opacity: 0.9; }}
+        .content {{ padding: 30px; }}
+        .info-section {{ margin-bottom: 25px; }}
+        .info-section h3 {{ color: #1E3A5F; border-bottom: 2px solid #D4AF37; padding-bottom: 8px; margin-bottom: 15px; font-size: 16px; }}
+        .info-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }}
+        .info-item {{ background: #f3f4f6; padding: 12px; border-radius: 8px; }}
+        .info-item label {{ display: block; color: #6b7280; font-size: 12px; margin-bottom: 4px; }}
+        .info-item value {{ color: #1f2937; font-weight: 600; }}
+        .estado {{ display: inline-block; padding: 6px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; }}
+        .estado-pendiente {{ background: #fef3c7; color: #d97706; }}
+        .miembros {{ margin-top: 15px; }}
+        .miembro {{ background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #D4AF37; }}
+        .footer {{ background: #f3f4f6; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; }}
+        .btn {{ display: inline-block; background: #1E3A5F; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; }}
     </style>
 </head>
 <body>
@@ -77,56 +77,53 @@ def enviar_correo_solicitud(solicitud, documentos=None):
         <div class="content">
             <div style="text-align: center; margin-bottom: 30px;">
                 <span class="estado estado-pendiente">Nueva Solicitud Recibida</span>
-                <h2 style="color: #1f2937; margin: 15px 0 5px;">{nombre_empresa}</h2>
-                <p style="color: #6b7280; margin: 0;">Código: <strong>{codigo}</strong></p>
+                <h2 style="color: #1f2937; margin: 15px 0 5px;">{solicitud.nombre_empresa}</h2>
+                <p style="color: #6b7280; margin: 0;">Código: <strong>{{solicitud.codigo_formateado}}</strong></p>
             </div>
             <div class="info-section">
                 <h3>Datos de la Empresa</h3>
                 <div class="info-grid">
-                    <div class="info-item"><label>RIF</label><value>{rif}</value></div>
-                    <div class="info-item"><label>NIT</label><value>{nit}</value></div>
-                    <div class="info-item"><label>Sector</label><value>{sector}</value></div>
-                    <div class="info-item"><label>Ciudad</label><value>{ciudad}</value></div>
+                    <div class="info-item"><label>RIF</label><value>{solicitud.rif}</value></div>
+                    <div class="info-item"><label>NIT</label><value>{solicitud.nit or 'No especificado'}</value></div>
+                    <div class="info-item"><label>Sector</label><value>{solicitud.sector or 'No especificado'}</value></div>
+                    <div class="info-item"><label>Ciudad</label><value>{solicitud.ciudad or 'No especificada'}</value></div>
+                    <div class="info-item"><label>Año Fundación</label><value>{solicitud.ano_fundacion or 'No especificado'}</value></div>
+                    <div class="info-item"><label>Empleados</label><value>{solicitud.numero_empleados or 'No especificado'}</value></div>
+                    <div class="info-item" style="grid-column: span 2;"><label>Dirección</label><value>{solicitud.direccion or 'No especificada'}</value></div>
                 </div>
             </div>
             <div class="info-section">
                 <h3>Datos de Contacto</h3>
                 <div class="info-grid">
-                    <div class="info-item"><label>Nombre</label><value>{nombre_contacto}</value></div>
-                    <div class="info-item"><label>Correo</label><value>{correo}</value></div>
+                    <div class="info-item"><label>Nombre</label><value>{solicitud.nombre_contacto}</value></div>
+                    <div class="info-item"><label>Cargo</label><value>{solicitud.cargo or 'No especificado'}</value></div>
+                    <div class="info-item"><label>Correo</label><value>{solicitud.correo}</value></div>
+                    <div class="info-item"><label>Teléfono</label><value>{solicitud.telefono or solicitud.telefono_movil or 'No especificado'}</value></div>
                 </div>
             </div>
-            <div class="footer">
-                <p>Fecha de recepción: {fecha}</p>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
 """
-
     # Add board members if any
     if solicitud.junta_directiva:
         html_content += """
-                    <div class="info-section">
-                        <h3>Junta Directiva</h3>
-                        <div class="miembros">
+            <div class="info-section">
+                <h3>Junta Directiva</h3>
+                <div class="miembros">
         """
         for miembro in solicitud.junta_directiva:
             html_content += f"""
-                            <div class="miembro">
-                                <strong>{miembro.nombre}</strong><br>
-                                <small>{miembro.cargo or 'Miembro'}</small>
-                            </div>
-            """
+                    <div class="miembro">
+                        <strong>{miembro.nombre}</strong><br>
+                        <small>{miembro.cargo or 'Miembro'}</small>
+                    </div>
+        """
         html_content += "</div></div>"
 
     # Add documents if any
     if solicitud.documentos:
         html_content += """
-                    <div class="info-section">
-                        <h3>Documentos Adjuntos</h3>
-                        <p>Se han adjuntado los siguientes documentos a la solicitud:</p>
+            <div class="info-section">
+                <h3>Documentos Adjuntos</h3>
+                <p>Se han adjuntado los siguientes documentos:</p>
         """
         for doc in solicitud.documentos:
             html_content += f"<li>{doc.nombre_original}</li>"
@@ -134,31 +131,32 @@ def enviar_correo_solicitud(solicitud, documentos=None):
 
     # Additional info and footer
     html_content += f"""
-                    <div class="info-section">
-                        <h3>Información Adicional</h3>
-                        <div class="info-item">
-                            <label>Razones de Afiliación</label>
-                            <value>{solicitud.razones_afiliacion or 'No especificadas'}</value>
-                        </div>
-                    </div>
-
-                    <div style="text-align: center; margin-top: 30px;">
-                        <p style="color: #6b7280; font-size: 13px;">
-                            Fecha de recepción: {solicitud.fecha_creacion.strftime('%d/%m/%Y %H:%M')}
-                        </p>
-                        <a href="{url_for('detalle_solicitud', solicitud_id=solicitud.id, _external=True)}" class="btn">
-                            Ver Solicitud en el Sistema
-                        </a>
-                    </div>
-                </div>
-                <div class="footer">
-                    <p>Este correo fue generado automáticamente por el Sistema de Gestión de la<br>
-                    Cámara de Comercio, Industrias y Servicios de Anaco-Anzoátegui</p>
+            <div class="info-section">
+                <h3>Información Adicional</h3>
+                <div class="info-item">
+                    <label>Razones de Afiliación</label>
+                    <value>{solicitud.razones_afiliacion or 'No especificadas'}</value>
                 </div>
             </div>
-        </body>
-        </html>
-    """
+
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="color: #6b7280; font-size: 13px;">
+                    Fecha de recepción: {solicitud.fecha_creacion.strftime('%d/%m/%Y %H:%M')}
+                </p>
+                <a href="{url_for('detalle_solicitud', solicitud_id=solicitud.id, _external=True)}" class="btn">
+                    Ver Solicitud en el Sistema
+                </a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Este correo fue generado automáticamente por el Sistema de Gestión de la<br>
+            Cámara de Comercio, Industrias y Servicios de Anaco-Anzoátegui</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
 
     text_content = f"""
     Nueva Solicitud de Afiliación

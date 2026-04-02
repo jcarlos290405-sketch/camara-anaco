@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Links - Cámara de Comercio{% endblock %}
+{% block page_title %}Links Compartidos{% endblock %}
+{% block page_subtitle %}Genere enlaces para compartir el formulario de afiliación{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <p class="text-gray-500">Genere enlaces únicos para compartir el formulario de solicitud de afiliación</p>
+    <a href="{{ url_for('crear_link') }}" class="px-5 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition font-medium">
+        <i class="fas fa-plus mr-2"></i>Nuevo Link
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {% for link in links %}
+    <div class="card-hover bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl {% if link.es_formulario %}bg-primary-100{% else %}bg-emerald-100{% endif %} flex items-center justify-center">
+                        <i class="fas {% if link.es_formulario %}fa-file-alt{% else %}fa-link{% endif %} text-xl {% if link.es_formulario %}text-primary-600{% else %}text-emerald-600{% endif %}"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800">{{ link.nombre or 'Link #' + link.codigo }}</h3>
+                        <p class="text-sm text-gray-500">{{ link.descripcion or 'Sin descripción' }}</p>
+                    </div>
+                </div>
+                <span class="badge {% if link.activo %}badge-aprobada{% else %}badge-rechazada{% endif %}">
+                    {{ 'Activo' if link.activo else 'Inactivo' }}
+                </span>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">URL del Link</label>
+                <div class="flex items-center gap-2 mt-1">
+                    <input type="text" id="link-url-{{ link.id }}" readonly value="{{ url_for('acceder_link', codigo=link.codigo, _external=True) }}"
+                        class="flex-1 text-sm text-gray-700 bg-transparent border-none focus:outline-none truncate">
+                    <button onclick="copyToClipboard('{{ url_for('acceder_link', codigo=link.codigo, _external=True) }}', 'Link copiado')"
+                        class="p-2 text-primary-600 hover:bg-primary-100 rounded-lg transition">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 text-center mb-4">
+                <div class="p-3 bg-gray-50 rounded-xl">
+                    <div class="text-2xl font-bold text-gray-800">{{ link.clicks }}</div>
+                    <div class="text-xs text-gray-500">Visitas</div>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-xl">
+                    <div class="text-2xl font-bold text-gray-800">{{ link.fecha_creacion.strftime('%d/%m') }}</div>
+                    <div class="text-xs text-gray-500">Creado</div>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-xl">
+                    <div class="text-2xl font-bold {% if link.es_formulario %}text-primary-600{% else %}text-emerald-600{% endif %}">
+                        <i class="fas {% if link.es_formulario %}fa-file-alt{% else %}fa-link{% endif %}"></i>
+                    </div>
+                    <div class="text-xs text-gray-500">Tipo</div>
+                </div>
+            </div>
+
+            <!-- QR Code -->
+            <div class="flex items-center justify-center p-4 bg-gray-50 rounded-xl">
+                <img src="{{ url_for('serve_upload', filename='qrcodes/' + link.codigo + '.png') }}" alt="QR Code" class="w-32 h-32">
+            </div>
+        </div>
+
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-2">
+            <a href="{{ url_for('acceder_link', codigo=link.codigo) }}" target="_blank"
+                class="flex-1 text-center py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-sm font-medium">
+                <i class="fas fa-external-link-alt mr-1"></i> Abrir
+            </a>
+            <a href="{{ url_for('toggle_link', link_id=link.id) }}"
+                class="flex-1 text-center py-2 {% if link.activo %}bg-amber-600 hover:bg-amber-700{% else %}bg-emerald-600 hover:bg-emerald-700{% endif %} text-white rounded-lg transition text-sm font-medium">
+                <i class="fas {% if link.activo %}fa-ban mr-1{% else %}fa-check mr-1{% endif %}"></i>
+                {{ 'Desactivar' if link.activo else 'Activar' }}
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-span-full text-center py-12">
+        <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-link text-4xl text-gray-300"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-600 mb-2">No hay links creados</h3>
+        <p class="text-gray-400 mb-4">Genere un enlace único para compartir el formulario de afiliación</p>
+        <a href="{{ url_for('crear_link') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition font-medium">
+            <i class="fas fa-plus"></i> Crear Link
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

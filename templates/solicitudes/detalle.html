@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle Solicitud - Cámara de Comercio{% endblock %}
+{% block page_title %}Detalle de Solicitud{% endblock %}
+{% block page_subtitle %}{{ solicitud.codigo_formateado }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('listar_solicitudes') }}" class="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                <i class="fas fa-arrow-left text-gray-600"></i>
+            </a>
+            <div>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">{{ solicitud.nombre_empresa }}</h2>
+                    <span class="badge badge-{{ solicitud.estado }}">{{ solicitud.estado }}</span>
+                </div>
+                <p class="text-gray-500">{{ solicitud.rif }} &bull; {{ solicitud.codigo_formateado }}</p>
+            </div>
+        </div>
+
+        <div class="flex gap-3">
+            <form action="{{ url_for('actualizar_estado_solicitud', solicitud_id=solicitud.id) }}" method="POST" class="inline">
+                <select name="estado" onchange="this.form.submit()" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                    <option value="pendiente" {% if solicitud.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                    <option value="en_revision" {% if solicitud.estado == 'en_revision' %}selected{% endif %}>En Revisión</option>
+                    <option value="aprobada" {% if solicitud.estado == 'aprobada' %}selected{% endif %}>Aprobada</option>
+                    <option value="rechazada" {% if solicitud.estado == 'rechazada' %}selected{% endif %}>Rechazada</option>
+                </select>
+            </form>
+
+            <form action="{{ url_for('eliminar_solicitud', solicitud_id=solicitud.id) }}" method="POST" class="inline">
+                <button type="button" onclick="showConfirmModal('¿Está seguro de eliminar esta solicitud?', () => this.form.submit())"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    <i class="fas fa-trash mr-2"></i>Eliminar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="border-b border-gray-200">
+            <nav class="flex -mb-px">
+                <button onclick="showTab('empresa')" class="tab-btn active px-6 py-4 text-sm font-medium border-b-2 border-primary-600 text-primary-600" data-tab="empresa">
+                    <i class="fas fa-building mr-2"></i>Empresa
+                </button>
+                <button onclick="showTab('contacto')" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="contacto">
+                    <i class="fas fa-user mr-2"></i>Contacto
+                </button>
+                <button onclick="showTab('junta')" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="junta">
+                    <i class="fas fa-users mr-2"></i>Junta Directiva
+                </button>
+                <button onclick="showTab('documentos')" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="documentos">
+                    <i class="fas fa-paperclip mr-2"></i>Documentos
+                </button>
+                <button onclick="showTab('historial')" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="historial">
+                    <i class="fas fa-history mr-2"></i>Historial
+                </button>
+            </nav>
+        </div>
+
+        <div class="p-6">
+            <!-- Tab: Empresa -->
+            <div id="tab-empresa" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-50 rounded-xl">
+                            <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre de la Empresa</label>
+                            <p class="text-gray-800 font-medium mt-1">{{ solicitud.nombre_empresa }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 bg-gray-50 rounded-xl">
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">RIF</label>
+                                <p class="text-gray-800 font-medium mt-1">{{ solicitud.rif }}</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-xl">
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">NIT</label>
+                                <p class="text-gray-800 font-medium mt-1">{{ solicitud.nit or 'No especificado' }}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 bg-gray-50 rounded-xl">
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Sector</label>
+                                <p class="text-gray-800 font-medium mt-1">{{ solicitud.sector or 'No especificado' }}</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-xl">
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Año Fundación</label>
+                                <p class="text-gray-800 font-medium mt-1">{{ solicitud.ano_fundacion or 'No especificado' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-50 rounded-xl">
+                            <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Dirección</label>
+                            <p class="text-gray-800 font-medium mt-1">{{ solicitud.direccion or 'No especificada' }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 bg-gray-50 rounded-xl">
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Ciudad</label>
+                                <p class="text-gray-800 font-medium mt-1">{{ solicitud.ciudad or 'No especificada' }}</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-xl">
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</label>
+                                <p class="text-gray-800 font-medium mt-1">{{ solicitud.estado_geo or 'No especificado' }}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-xl">
+                            <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Página Web</label>
+                            <p class="text-gray-800 font-medium mt-1">{{ solicitud.pagina_web or 'No especificada' }}</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-xl">
+                            <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">N° Empleados</label>
+                            <p class="text-gray-800 font-medium mt-1">{{ solicitud.numero_empleados or 'No especificado' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {% if solicitud.descripcion %}
+                <div class="mt-6 p-4 bg-gray-50 rounded-xl">
+                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</label>
+                    <p class="text-gray-800 mt-1">{{ solicitud.descripcion }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Contacto -->
+            <div id="tab-contacto" class="tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-6 bg-gray-50 rounded-xl">
+                        <div class="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user text-2xl text-primary-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 text-center mb-1">{{ solicitud.nombre_contacto }}</h3>
+                        <p class="text-gray-500 text-center">{{ solicitud.cargo or 'Sin cargo especificado' }}</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-50 rounded-xl flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-primary-100 flex items-center justify-center">
+                                <i class="fas fa-envelope text-primary-600"></i>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Correo Electrónico</label>
+                                <p class="text-gray-800 font-medium">{{ solicitud.correo }}</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-gray-50 rounded-xl flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                <i class="fas fa-phone text-emerald-600"></i>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono Local</label>
+                                <p class="text-gray-800 font-medium">{{ solicitud.telefono or 'No especificado' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-gray-50 rounded-xl flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                                <i class="fas fa-mobile-alt text-amber-600"></i>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono Móvil</label>
+                                <p class="text-gray-800 font-medium">{{ solicitud.telefono_movil or 'No especificado' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if solicitud.razones_afiliacion or solicitud.expectativas %}
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% if solicitud.razones_afiliacion %}
+                    <div class="p-4 bg-blue-50 rounded-xl">
+                        <label class="text-xs font-medium text-blue-600 uppercase tracking-wider">Razones de Afiliación</label>
+                        <p class="text-gray-800 mt-1">{{ solicitud.razones_afiliacion }}</p>
+                    </div>
+                    {% endif %}
+                    {% if solicitud.expectativas %}
+                    <div class="p-4 bg-purple-50 rounded-xl">
+                        <label class="text-xs font-medium text-purple-600 uppercase tracking-wider">Expectativas</label>
+                        <p class="text-gray-800 mt-1">{{ solicitud.expectativas }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Junta -->
+            <div id="tab-junta" class="tab-content hidden">
+                {% if solicitud.junta_directiva %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for miembro in solicitud.junta_directiva %}
+                    <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-secondary">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                                <i class="fas fa-user text-secondary"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">{{ miembro.nombre }}</h4>
+                                <p class="text-sm text-gray-500">{{ miembro.cargo or 'Miembro' }}</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            {% if miembro.correo %}
+                            <p class="text-gray-600"><i class="fas fa-envelope w-4 mr-2"></i>{{ miembro.correo }}</p>
+                            {% endif %}
+                            {% if miembro.telefono %}
+                            <p class="text-gray-600"><i class="fas fa-phone w-4 mr-2"></i>{{ miembro.telefono }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-2xl text-gray-300"></i>
+                    </div>
+                    <p class="text-gray-500">No hay miembros de junta directiva registrados</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Documentos -->
+            <div id="tab-documentos" class="tab-content hidden">
+                {% if solicitud.documentos %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for doc in solicitud.documentos %}
+                    <div class="p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            {% if doc.es_pdf %}
+                            <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center">
+                                <i class="fas fa-file-pdf text-xl text-red-600"></i>
+                            </div>
+                            {% elif doc.es_imagen %}
+                            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-file-image text-xl text-blue-600"></i>
+                            </div>
+                            {% else %}
+                            <div class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                                <i class="fas fa-file text-xl text-gray-600"></i>
+                            </div>
+                            {% endif %}
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-800 truncate">{{ doc.nombre_original }}</p>
+                                <p class="text-xs text-gray-400">{{ doc.extension|upper }} &bull; {{ (doc.tamano / 1024)|round|int }} KB</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="{{ url_for('serve_upload', filename=doc.nombre_archivo) }}" target="_blank"
+                                class="flex-1 text-center py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-sm">
+                                <i class="fas fa-eye mr-1"></i> Ver
+                            </a>
+                            <a href="{{ url_for('serve_upload', filename=doc.nombre_archivo) }}" download="{{ doc.nombre_original }}"
+                                class="flex-1 text-center py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">
+                                <i class="fas fa-download mr-1"></i> Descargar
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-paperclip text-2xl text-gray-300"></i>
+                    </div>
+                    <p class="text-gray-500">No hay documentos adjuntos</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Historial -->
+            <div id="tab-historial" class="tab-content hidden">
+                <div class="space-y-4">
+                    <div class="p-4 bg-emerald-50 rounded-xl border-l-4 border-emerald-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-800">Solicitud creada</p>
+                                <p class="text-sm text-gray-500">{{ solicitud.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                            <span class="badge badge-aprobada">Inicial</span>
+                        </div>
+                    </div>
+
+                    {% for h in solicitud.historial %}
+                    <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-gray-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-800">
+                                    Estado cambiado: <span class="badge badge-{{ h.estado_nuevo }}">{{ h.estado_nuevo }}</span>
+                                </p>
+                                <p class="text-sm text-gray-500">{{ h.fecha_cambio.strftime('%d/%m/%Y %H:%M') }}</p>
+                                {% if h.comentario %}
+                                <p class="text-sm text-gray-600 mt-2 italic">"{{ h.comentario }}"</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('border-primary-600', 'text-primary-600');
+        el.classList.add('border-transparent', 'text-gray-500');
+    });
+
+    document.getElementById('tab-' + tab).classList.remove('hidden');
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('border-primary-600', 'text-primary-600');
+    document.querySelector(`[data-tab="${tab}"]`).classList.remove('border-transparent', 'text-gray-500');
+}
+</script>
+{% endblock %}

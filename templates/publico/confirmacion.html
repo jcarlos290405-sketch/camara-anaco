@@ -1,0 +1,164 @@
+{% extends "public_base.html" %}
+
+{% block title %}Solicitud Enviada - Cámara de Comercio{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-checkmark {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        animation: scaleIn 0.5s ease;
+    }
+    @keyframes scaleIn {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .checkmark-path {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        animation: checkmark 1s ease 0.3s forwards;
+    }
+    @keyframes checkmark {
+        to { stroke-dashoffset: 0; }
+    }
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        animation: confetti-fall 3s ease-out forwards;
+    }
+    @keyframes confetti-fall {
+        0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(400px) rotate(720deg); opacity: 0; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+    <div class="max-w-2xl mx-auto px-4">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-emerald-500 to-green-600 text-white py-8 px-6 text-center relative overflow-hidden">
+                <div id="confetti-container" class="absolute inset-0 pointer-events-none"></div>
+                <div class="relative z-10">
+                    <div class="success-checkmark mb-6">
+                        <svg width="50" height="50" viewBox="0 0 50 50">
+                            <path class="checkmark-path" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M15 25 L22 32 L35 18"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl font-bold mb-2">¡Solicitud Enviada!</h1>
+                    <p class="text-emerald-100">Su solicitud ha sido recibida exitosamente</p>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-8">
+                {% if solicitud %}
+                <div class="text-center mb-8">
+                    <p class="text-gray-600 mb-4">Su número de solicitud es:</p>
+                    <div class="inline-block bg-primary-50 border border-primary-200 rounded-xl px-6 py-3">
+                        <span class="text-2xl font-bold text-primary-600">{{ solicitud.codigo_formateado }}</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-2xl p-6 mb-8">
+                    <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-building text-primary-600"></i>
+                        Datos de la Empresa
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-500">Empresa:</span>
+                            <p class="font-medium text-gray-800">{{ solicitud.nombre_empresa }}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">RIF:</span>
+                            <p class="font-medium text-gray-800">{{ solicitud.rif }}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Contacto:</span>
+                            <p class="font-medium text-gray-800">{{ solicitud.nombre_contacto }}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Correo:</span>
+                            <p class="font-medium text-gray-800">{{ solicitud.correo }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-clock text-amber-500 mt-1"></i>
+                        <div>
+                            <h4 class="font-medium text-amber-800">Próximos Pasos</h4>
+                            <p class="text-sm text-amber-700 mt-1">
+                                Su solicitud será revisada por nuestro equipo. Recibirá un correo electrónico
+                                con la confirmación de recepción y posterior información sobre el estado de su solicitud.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-envelope text-blue-500 mt-1"></i>
+                        <div>
+                            <h4 class="font-medium text-blue-800">Notificación</h4>
+                            <p class="text-sm text-blue-700 mt-1">
+                                Se ha enviado una copia de los datos proporcionados al correo electrónico
+                                <strong>{{ solicitud.correo }}</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{{ url_for('index') }}" class="flex-1 text-center py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition font-medium">
+                        <i class="fas fa-home mr-2"></i>
+                        Volver al Inicio
+                    </a>
+                    <a href="{{ url_for('solicitud_form') }}" class="flex-1 text-center py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-lg transition font-medium">
+                        <i class="fas fa-plus mr-2"></i>
+                        Nueva Solicitud
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center text-sm text-gray-400 mt-6">
+            ¿Tiene alguna pregunta? Contáctenos al <span class="text-primary-600">secretariacamaraanaco@gmail.com</span>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Create confetti
+    const container = document.getElementById('confetti-container');
+    if (container) {
+        const colors = ['#10B981', '#059669', '#D4AF37', '#F59E0B', '#EF4444', '#3B82F6'];
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            container.appendChild(confetti);
+        }
+    }
+});
+</script>
+{% endblock %}

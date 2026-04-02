@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if afiliado else 'Nuevo' }} Afiliado - Cámara de Comercio{% endblock %}
+{% block page_title %}{{ 'Editar' if afiliado else 'Nuevo' }} Afiliado{% endblock %}
+{% block page_subtitle %}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <form method="POST" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="floating-label col-span-2">
+                    <input type="text" name="empresa" value="{{ afiliado.empresa if afiliado else '' }}" required
+                        class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                    <label>Nombre de la Empresa *</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="text" name="rif" value="{{ afiliado.rif if afiliado else '' }}" required
+                        class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none uppercase" placeholder=" ">
+                    <label>RIF *</label>
+                </div>
+
+                <div class="floating-label">
+                    <select name="sector" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none">
+                        <option value="">Seleccione...</option>
+                        <option value="Comercio" {% if afiliado and afiliado.sector == 'Comercio' %}selected{% endif %}>Comercio</option>
+                        <option value="Industria" {% if afiliado and afiliado.sector == 'Industria' %}selected{% endif %}>Industria</option>
+                        <option value="Servicios" {% if afiliado and afiliado.sector == 'Servicios' %}selected{% endif %}>Servicios</option>
+                        <option value="Otro" {% if afiliado and afiliado.sector == 'Otro' %}selected{% endif %}>Otro</option>
+                    </select>
+                    <label>Sector</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="text" name="contacto_principal" value="{{ afiliado.contacto_principal if afiliado else '' }}"
+                        class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                    <label>Contacto Principal</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="email" name="correo" value="{{ afiliado.correo if afiliado else '' }}"
+                        class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                    <label>Correo</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="tel" name="telefono" value="{{ afiliado.telefono if afiliado else '' }}"
+                        class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                    <label>Teléfono</label>
+                </div>
+
+                <div class="floating-label col-span-2">
+                    <textarea name="direccion" rows="3"
+                        class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none resize-none" placeholder=" ">{{ afiliado.direccion if afiliado else '' }}</textarea>
+                    <label>Dirección</label>
+                </div>
+
+                <div class="floating-label col-span-2">
+                    <textarea name="observaciones" rows="3"
+                        class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none resize-none" placeholder=" ">{{ afiliado.observaciones if afiliado else '' }}</textarea>
+                    <label>Observaciones</label>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
+                <a href="{{ url_for('listar_afiliados') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-medium">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-medium">
+                    <i class="fas fa-save mr-2"></i>Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

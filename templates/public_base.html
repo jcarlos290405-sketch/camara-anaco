@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cámara de Comercio{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            300: '#7cc8fb',
+                            400: '#36aaf5',
+                            500: '#0A4B6E',
+                            600: '#1E3A5F',
+                            700: '#1a3450',
+                            800: '#162b42',
+                            900: '#0f1d2c',
+                        },
+                        secondary: {
+                            DEFAULT: '#D4AF37',
+                            50: '#fdf9ef',
+                            100: '#faf1d6',
+                            200: '#f4e1ab',
+                            300: '#eccb76',
+                            400: '#e4b84e',
+                            500: '#D4AF37',
+                            600: '#b8922d',
+                            700: '#997226',
+                            800: '#7f5923',
+                            900: '#6a491f',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        .floating-label {
+            position: relative;
+        }
+        .floating-label input, .floating-label select, .floating-label textarea {
+            padding-top: 1.25rem;
+        }
+        .floating-label label {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            transition: all 0.2s ease;
+            pointer-events: none;
+            background: white;
+            padding: 0 4px;
+        }
+        .floating-label textarea ~ label {
+            top: 24px;
+        }
+        .floating-label input:focus ~ label,
+        .floating-label input:not(:placeholder-shown) ~ label,
+        .floating-label select:focus ~ label,
+        .floating-label select:valid ~ label,
+        .floating-label textarea:focus ~ label,
+        .floating-label textarea:not(:placeholder-shown) ~ label {
+            top: 0;
+            font-size: 12px;
+            color: #1E3A5F;
+        }
+        .input-modern:focus {
+            border-color: #1E3A5F;
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        .step-indicator {
+            transition: all 0.3s ease;
+        }
+        .step-indicator.active {
+            background: linear-gradient(135deg, #1E3A5F 0%, #0A4B6E 100%);
+            color: white;
+        }
+        .step-indicator.completed {
+            background: #10B981;
+            color: white;
+        }
+        .step-indicator.inactive {
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+        .form-step {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .dropzone {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .dropzone:hover, .dropzone.dragover {
+            border-color: #1E3A5F;
+            background: #f0f7ff;
+        }
+        .file-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .file-item {
+            position: relative;
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .file-item .remove-file {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            background: #EF4444;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        .toast {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .toast.success { border-left: 4px solid #10B981; }
+        .toast.error { border-left: 4px solid #EF4444; }
+        .toast.warning { border-left: 4px solid #F59E0B; }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="h-full font-sans antialiased bg-gray-50">
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <a href="{{ url_for('index') }}" class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-primary-600 flex items-center justify-center">
+                            <i class="fas fa-building-columns text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-sm font-bold text-primary-600 leading-tight">Cámara de Comercio</h1>
+                            <p class="text-xs text-gray-500">Industrias y Servicios - Anaco</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-primary-600 transition">Inicio</a>
+                    <a href="{{ url_for('solicitud_form') }}" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">
+                        Solicitar Afiliación
+                    </a>
+                    <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-primary-600 transition">
+                        <i class="fas fa-user-circle mr-1"></i>Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">
+                &copy; 2026 Cámara de Comercio, Industrias y Servicios de Anaco-Anzoátegui
+            </p>
+            <p class="text-gray-500 text-xs mt-2">contacto: secretariacamaraanaco@gmail.com</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Toast notifications
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+
+            const icon = type === 'success' ? 'fa-check-circle text-green-500' :
+                         type === 'error' ? 'fa-times-circle text-red-500' :
+                         'fa-exclamation-circle text-yellow-500';
+
+            toast.innerHTML = `
+                <i class="fas ${icon} text-xl"></i>
+                <span class="flex-1 text-gray-700">${message}</span>
+                <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

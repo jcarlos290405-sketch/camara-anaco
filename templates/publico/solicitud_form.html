@@ -1,0 +1,552 @@
+{% extends "public_base.html" %}
+
+{% block title %}Solicitud de Afiliación - Cámara de Comercio{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 text-white py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <div class="flex justify-center mb-4">
+                <div class="w-20 h-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
+                    <i class="fas fa-building-columns text-4xl text-secondary"></i>
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold mb-2">Cámara de Comercio, Industrias y Servicios</h1>
+            <p class="text-primary-200 text-lg">de Anaco-Anzoátegui</p>
+            <p class="text-primary-100 mt-4">Formulario de Solicitud de Afiliación</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 -mt-4 pb-12">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <!-- Progress Bar -->
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-medium text-gray-600">Paso <span id="current-step-num">1</span> de 5</span>
+                    <span id="progress-percent" class="text-sm font-semibold text-primary-600">20%</span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500" style="width: 20%"></div>
+                </div>
+            </div>
+
+            <!-- Step Indicators -->
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between">
+                    <div class="flex flex-col items-center flex-1">
+                        <div class="step-indicator active w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2" data-step="1">1</div>
+                        <span class="text-xs text-gray-600">Empresa</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                        <div class="step-indicator inactive w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2" data-step="2">2</div>
+                        <span class="text-xs text-gray-500">Contacto</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                        <div class="step-indicator inactive w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2" data-step="3">3</div>
+                        <span class="text-xs text-gray-500">Junta</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                        <div class="step-indicator inactive w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2" data-step="4">4</div>
+                        <span class="text-xs text-gray-500">Documentos</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                        <div class="step-indicator inactive w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2" data-step="5">5</div>
+                        <span class="text-xs text-gray-500">Confirmar</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="solicitud-form" method="POST" enctype="multipart/form-data" class="p-6">
+                <!-- Step 1: Datos de la Empresa -->
+                <div class="form-step active" data-step="1">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-building text-primary-600 mr-2"></i>
+                        Datos de la Empresa
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="floating-label col-span-2">
+                            <input type="text" name="nombre_empresa" id="nombre_empresa" required
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="nombre_empresa">Nombre de la Empresa *</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" name="rif" id="rif" required
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none uppercase"
+                                placeholder=" ">
+                            <label for="rif">RIF / Cédula *</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" name="nit"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none uppercase"
+                                placeholder=" ">
+                            <label for="nit">NIT</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <select name="sector" id="sector" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none">
+                                <option value="">Seleccione...</option>
+                                <option value="Comercio">Comercio</option>
+                                <option value="Industria">Industria</option>
+                                <option value="Servicios">Servicios</option>
+                                <option value="Agricultura">Agricultura</option>
+                                <option value="Construccion">Construcción</option>
+                                <option value="Tecnologia">Tecnología</option>
+                                <option value="Turismo">Turismo</option>
+                                <option value="Salud">Salud</option>
+                                <option value="Educacion">Educación</option>
+                                <option value="Transporte">Transporte</option>
+                                <option value="Alimentacion">Alimentación</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <label for="sector">Sector Económico</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" name="ano_fundacion"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="ano_fundacion">Año de Fundación</label>
+                        </div>
+
+                        <div class="floating-label col-span-2">
+                            <input type="text" name="direccion"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="direccion">Dirección</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" name="ciudad"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="ciudad">Ciudad</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" name="estado_geo"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="estado_geo">Estado</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" name="pagina_web"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="pagina_web">Página Web</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="number" name="numero_empleados" min="1"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="numero_empleados">Número de Empleados</label>
+                        </div>
+
+                        <div class="floating-label col-span-2">
+                            <textarea name="descripcion" rows="3"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none resize-none"
+                                placeholder=" "></textarea>
+                            <label for="descripcion">Descripción de la Empresa</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Datos de Contacto -->
+                <div class="form-step" data-step="2">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-user text-primary-600 mr-2"></i>
+                        Datos de Contacto
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="floating-label col-span-2">
+                            <input type="text" name="nombre_contacto" id="nombre_contacto" required
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="nombre_contacto">Nombre Completo *</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" name="cargo"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="cargo">Cargo en la Empresa</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="email" name="correo" id="correo" required
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="correo">Correo Electrónico *</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="tel" name="telefono"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="telefono">Teléfono Local</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="tel" name="telefono_movil"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                placeholder=" ">
+                            <label for="telefono_movil">Teléfono Móvil</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Junta Directiva -->
+                <div class="form-step" data-step="3">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-users text-primary-600 mr-2"></i>
+                        Junta Directiva
+                    </h2>
+                    <p class="text-gray-500 mb-6">Agregue los miembros de la junta directiva de su empresa. Puede agregar tantos como necesite.</p>
+
+                    <div id="miembros-container" class="space-y-4">
+                        <!-- Member template -->
+                        <div class="miembro-item bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="font-medium text-gray-700">Miembro <span class="miembro-num">1</span></span>
+                                <button type="button" class="text-red-500 hover:text-red-700 text-sm remove-miembro" onclick="removeMiembro(this)">
+                                    <i class="fas fa-trash mr-1"></i> Eliminar
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="floating-label">
+                                    <input type="text" name="miembro_nombre" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                                    <label>Nombre Completo</label>
+                                </div>
+                                <div class="floating-label">
+                                    <input type="text" name="miembro_cargo" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                                    <label>Cargo</label>
+                                </div>
+                                <div class="floating-label">
+                                    <input type="email" name="miembro_correo" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                                    <label>Correo</label>
+                                </div>
+                                <div class="floating-label">
+                                    <input type="tel" name="miembro_telefono" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                                    <label>Teléfono</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="add-miembro-btn" class="mt-4 w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-primary-500 hover:text-primary-600 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-plus"></i>
+                        Agregar Miembro
+                    </button>
+                </div>
+
+                <!-- Step 4: Documentos -->
+                <div class="form-step" data-step="4">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-paperclip text-primary-600 mr-2"></i>
+                        Documentos Requeridos
+                    </h2>
+                    <p class="text-gray-500 mb-6">Suba los documentos requeridos para procesar su solicitud. Puede drag & drop o hacer clic para seleccionar.</p>
+
+                    <div class="dropzone" id="dropzone">
+                        <input type="file" id="file-input" name="documentos" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" class="hidden">
+                        <div class="text-gray-400 mb-4">
+                            <i class="fas fa-cloud-upload-alt text-5xl"></i>
+                        </div>
+                        <p class="text-gray-600 font-medium mb-2">Arrastre archivos aquí o haga clic para seleccionar</p>
+                        <p class="text-sm text-gray-400">PDF, JPG, PNG, DOC (máx. 16MB por archivo)</p>
+                    </div>
+
+                    <div id="file-preview" class="file-preview"></div>
+
+                    <div class="mt-6 p-4 bg-blue-50 rounded-xl">
+                        <h4 class="font-medium text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Documentos Recomendados:</h4>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>&bull; Registro de Información Fiscal (RIF)</li>
+                            <li>&bull; Licencia de Actividades Económicas</li>
+                            <li>&bull; Certificado de Registro de Comercio</li>
+                            <li>&bull; Acta de Asamblea (si aplica)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 5: Confirmación -->
+                <div class="form-step" data-step="5">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-check-circle text-primary-600 mr-2"></i>
+                        Información Adicional
+                    </h2>
+
+                    <div class="space-y-6">
+                        <div class="floating-label">
+                            <textarea name="razones_afiliacion" rows="4"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none resize-none"
+                                placeholder=" "></textarea>
+                            <label for="razones_afiliacion">¿Por qué desea afiliarse a la Cámara de Comercio?</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <textarea name="expectativas" rows="4"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none resize-none"
+                                placeholder=" "></textarea>
+                            <label for="expectativas">¿Qué expectativas tiene de la afiliación?</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <textarea name="comentarios" rows="3"
+                                class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none resize-none"
+                                placeholder=" "></textarea>
+                            <label for="comentarios">Comentarios Adicionales</label>
+                        </div>
+
+                        <div class="p-4 bg-gray-50 rounded-xl">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" name="acepto_terminos" required class="w-5 h-5 mt-0.5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                                <span class="text-sm text-gray-600">
+                                    Acepto los <a href="#" class="text-primary-600 hover:underline">términos y condiciones</a> y autorizo el procesamiento de mis datos personales conforme a la política de privacidad.
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8 pt-6 border-t border-gray-200">
+                    <button type="button" id="prev-btn" class="hidden px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-medium">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Anterior
+                    </button>
+                    <button type="button" id="next-btn" class="ml-auto px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:shadow-lg transition font-medium">
+                        Siguiente
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                    <button type="submit" id="submit-btn" class="hidden ml-auto px-8 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-lg hover:shadow-lg transition font-medium">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Enviar Solicitud
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Help Text -->
+        <div class="mt-6 text-center text-sm text-gray-500">
+            <p>¿Necesita ayuda? Contáctenos al <span class="text-primary-600">secretariacamaraanaco@gmail.com</span></p>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentStep = 1;
+const totalSteps = 5;
+
+const form = document.getElementById('solicitud-form');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const submitBtn = document.getElementById('submit-btn');
+const progressBar = document.getElementById('progress-bar');
+const progressPercent = document.getElementById('progress-percent');
+const currentStepNum = document.getElementById('current-step-num');
+
+// Update step indicator
+function updateStepIndicator(step) {
+    document.querySelectorAll('.step-indicator').forEach(indicator => {
+        const indicatorStep = parseInt(indicator.dataset.step);
+        indicator.classList.remove('active', 'completed', 'inactive');
+
+        if (indicatorStep === step) {
+            indicator.classList.add('active');
+        } else if (indicatorStep < step) {
+            indicator.classList.add('completed');
+        } else {
+            indicator.classList.add('inactive');
+        }
+    });
+}
+
+// Show step
+function showStep(step) {
+    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
+
+    currentStep = step;
+    updateStepIndicator(step);
+
+    // Update progress bar
+    const percent = (step / totalSteps) * 100;
+    progressBar.style.width = percent + '%';
+    progressPercent.textContent = Math.round(percent) + '%';
+    currentStepNum.textContent = step;
+
+    // Show/hide buttons
+    prevBtn.classList.toggle('hidden', step === 1);
+    nextBtn.classList.toggle('hidden', step === totalSteps);
+    submitBtn.classList.toggle('hidden', step !== totalSteps);
+}
+
+// Next button
+nextBtn.addEventListener('click', () => {
+    if (validateCurrentStep()) {
+        showStep(currentStep + 1);
+    }
+});
+
+// Previous button
+prevBtn.addEventListener('click', () => {
+    showStep(currentStep - 1);
+});
+
+// Validate current step
+function validateCurrentStep() {
+    const currentFormStep = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+    const requiredFields = currentFormStep.querySelectorAll('[required]');
+    let isValid = true;
+
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.classList.add('border-red-500');
+            isValid = false;
+        } else {
+            field.classList.remove('border-red-500');
+        }
+    });
+
+    if (!isValid) {
+        showToast('Por favor, complete los campos requeridos', 'error');
+    }
+
+    return isValid;
+}
+
+// Add member
+document.getElementById('add-miembro-btn').addEventListener('click', () => {
+    const container = document.getElementById('miembros-container');
+    const count = container.querySelectorAll('.miembro-item').length + 1;
+
+    const html = `
+        <div class="miembro-item bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-medium text-gray-700">Miembro <span class="miembro-num">${count}</span></span>
+                <button type="button" class="text-red-500 hover:text-red-700 text-sm remove-miembro" onclick="removeMiembro(this)">
+                    <i class="fas fa-trash mr-1"></i> Eliminar
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="floating-label">
+                    <input type="text" name="miembro_nombre" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                    <label>Nombre Completo</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" name="miembro_cargo" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                    <label>Cargo</label>
+                </div>
+                <div class="floating-label">
+                    <input type="email" name="miembro_correo" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                    <label>Correo</label>
+                </div>
+                <div class="floating-label">
+                    <input type="tel" name="miembro_telefono" class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                    <label>Teléfono</label>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', html);
+});
+
+function removeMiembro(btn) {
+    const item = btn.closest('.miembro-item');
+    const container = document.getElementById('miembros-container');
+
+    if (container.querySelectorAll('.miembro-item').length > 1) {
+        item.remove();
+        // Renumber members
+        container.querySelectorAll('.miembro-item').forEach((el, index) => {
+            el.querySelector('.miembro-num').textContent = index + 1;
+        });
+    } else {
+        showToast('Debe tener al menos un miembro', 'warning');
+    }
+}
+
+// File dropzone
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('file-input');
+const filePreview = document.getElementById('file-preview');
+
+dropzone.addEventListener('click', () => fileInput.click());
+
+dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+});
+
+dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dragover');
+});
+
+dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+});
+
+fileInput.addEventListener('change', () => {
+    handleFiles(fileInput.files);
+});
+
+function handleFiles(files) {
+    Array.from(files).forEach(file => {
+        if (file.size > 16 * 1024 * 1024) {
+            showToast(`El archivo ${file.name} excede el límite de 16MB`, 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const isImage = file.type.startsWith('image/');
+            const icon = isImage ? `<img src="${e.target.result}" class="h-12 w-12 object-cover rounded-lg mx-auto">` :
+                          `<i class="fas fa-file-pdf text-3xl text-red-500"></i>`;
+
+            const html = `
+                <div class="file-item" data-file="${file.name}">
+                    ${icon}
+                    <p class="text-xs text-gray-600 mt-2 truncate">${file.name}</p>
+                    <button type="button" class="remove-file" onclick="removeFile(this, '${file.name}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            filePreview.insertAdjacentHTML('beforeend', html);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removeFile(btn, filename) {
+    btn.closest('.file-item').remove();
+}
+
+// Form submission
+form.addEventListener('submit', function(e) {
+    if (!validateCurrentStep()) {
+        e.preventDefault();
+        return;
+    }
+
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
+    // Let the form submit normally - Flask will redirect to confirmation page
+});
+</script>
+{% endblock %}

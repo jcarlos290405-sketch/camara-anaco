@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if link else 'Nuevo' }} Link - Cámara de Comercio{% endblock %}
+{% block page_title %}{{ 'Editar' if link else 'Nuevo' }} Link Compartido{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <form method="POST" class="space-y-6">
+            <div class="floating-label">
+                <input type="text" name="nombre" value="{{ link.nombre if link else '' }}" required
+                    class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                <label>Nombre del Link *</label>
+            </div>
+
+            <div class="floating-label">
+                <textarea name="descripcion" rows="3"
+                    class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none resize-none" placeholder=" ">{{ link.descripcion if link else '' }}</textarea>
+                <label>Descripción</label>
+            </div>
+
+            <div class="floating-label">
+                <input type="url" name="url_destino" value="{{ link.url_destino if link else '' }}"
+                    class="input-modern w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" placeholder=" ">
+                <label>URL de Destino (opcional)</label>
+            </div>
+
+            <div class="p-4 bg-gray-50 rounded-xl">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="es_formulario" {% if not link or link.es_formulario %}checked{% endif %}
+                        class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                    <div>
+                        <p class="font-medium text-gray-800">Redirigir al formulario de afiliación</p>
+                        <p class="text-sm text-gray-500">Si está desactivado, usará la URL de destino</p>
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
+                <a href="{{ url_for('listar_links') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-medium">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-medium">
+                    <i class="fas fa-save mr-2"></i>Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

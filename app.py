@@ -223,15 +223,17 @@ def enviar_correo_solicitud(solicitud, documentos=None):
                     msg.attach(part)
 
         # Send email
-        with smtplib.SMTP(app.config['SMTP_SERVER'], app.config['SMTP_PORT']) as server:
-            server.starttls()
-            server.login(app.config['SMTP_USER'], app.config['SMTP_PASSWORD'])
-            server.send_message(msg)
-
-        return True
-    except Exception as e:
-        print(f"Error enviando correo: {str(e)}")
-        return False
+        try:
+            with smtplib.SMTP(app.config['SMTP_SERVER'], app.config['SMTP_PORT']) as server:
+                server.starttls()
+                server.login(app.config['SMTP_USER'], app.config['SMTP_PASSWORD'])
+                server.send_message(msg)
+            return True
+        except Exception as e:
+            print(f"Error enviando correo: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
 
 
 def generate_qr_code(data, filename):

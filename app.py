@@ -234,6 +234,11 @@ def enviar_correo_solicitud(solicitud, documentos=None):
             import traceback
             traceback.print_exc()
             return False
+    except Exception as e:
+        print(f"Error general en enviar_correo_solicitud: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
 def generate_qr_code(data, filename):

@@ -17,10 +17,10 @@ class Config:
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
 
     # SMTP Configuration
-    SMTP_SERVER = os.environ.get('SMTP_SERVER') or 'smtp.gmail.com'
-    SMTP_PORT = int(os.environ.get('SMTP_PORT') or 587)
-    SMTP_USER = os.environ.get('EMAIL_USER') or 'secretariacamaraanaco@gmail.com'
-    SMTP_PASSWORD = os.environ.get('EMAIL_PASSWORD') or 'woaddhypawapizej'
-    SMTP_FROM_EMAIL = os.environ.get('SMTP_FROM_EMAIL') or 'secretariacamaraanaco@gmail.com'
-    SMTP_TO_EMAIL = os.environ.get('SMTP_TO_EMAIL') or 'secretariacamaraanaco@gmail.com'
+    SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+    SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
+    SMTP_USER = os.getenv('EMAIL_USER', 'secretariacamaraanaco@gmail.com')
+    SMTP_PASSWORD = os.getenv('EMAIL_PASSWORD', '')
+    SMTP_FROM_EMAIL = os.getenv('SMTP_FROM_EMAIL', 'secretariacamaraanaco@gmail.com')
+    SMTP_TO_EMAIL = os.getenv('SMTP_TO_EMAIL', 'secretariacamaraanaco@gmail.com')
     MAIL_USE_TLS = True

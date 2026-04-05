@@ -2,10 +2,10 @@ import os
 from datetime import timedelta
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'camara-comercio-secret-key-2026'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
 
     # SQLite Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///camara_comercio.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Upload settings
@@ -17,10 +17,10 @@ class Config:
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
 
     # SMTP Configuration
-    SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
-    SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
-    SMTP_USER = os.getenv('EMAIL_USER', 'secretariacamaraanaco@gmail.com')
-    SMTP_PASSWORD = os.getenv('EMAIL_PASSWORD', '')
-    SMTP_FROM_EMAIL = os.getenv('SMTP_FROM_EMAIL', 'secretariacamaraanaco@gmail.com')
-    SMTP_TO_EMAIL = os.getenv('SMTP_TO_EMAIL', 'secretariacamaraanaco@gmail.com')
-    MAIL_USE_TLS = True
+    SMTP_SERVER = os.environ.get('SMTP_SERVER')
+    SMTP_PORT = int(os.environ.get('SMTP_PORT'))
+    SMTP_USER = os.environ.get('EMAIL_USER')
+    SMTP_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+    SMTP_FROM_EMAIL = os.environ.get('SMTP_FROM_EMAIL')
+    SMTP_TO_EMAIL = os.environ.get('SMTP_TO_EMAIL')
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True') == 'True'

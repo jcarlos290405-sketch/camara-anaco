@@ -38,7 +38,7 @@ def enviar_correo_solicitud(solicitud, documentos=None):
     """Envía notificación por correo cuando se recibe una nueva solicitud"""
     msg = MIMEMultipart('alternative')
     msg['Subject'] = f'Nueva Solicitud de Afiliación: {solicitud.nombre_empresa}'
-    msg['From'] = app.config['SMTP_FROM_EMAIL']
+    msg['From'] = app.config['SMTP_USER']
     msg['To'] = app.config['SMTP_TO_EMAIL']
 
     # HTML body
@@ -733,9 +733,13 @@ def init_db():
         # Create default admin if not exists
         admin = Usuario.query.filter_by(username='CamDCDA26').first()
         if not admin:
+            admin_password = os.environ.get('ADMIN_PASSWORD')
+            if not admin_password:
+                print("ERROR: ADMIN_PASSWORD no configurada en variables de entorno")
+                return
             admin = Usuario(
                 username='CamDCDA26',
-                password_hash=generate_password_hash('CAM26COMAN$*'),
+                password_hash=generate_password_hash(admin_password),
                 nombre='Administrador',
                 rol='admin'
             )
@@ -749,7 +753,7 @@ def init_db():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=os.environ.get('FLASK_DEBUG', 'False') == 'True', host='0.0.0.0', port=5000)
 else:
     # For gunicorn/Production: ensure tables exist on startup
     with app.app_context():

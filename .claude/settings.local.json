@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m py_compile config.py app.py models.py)",
+      "Bash(git add:*)"
+    ]
+  }
+}

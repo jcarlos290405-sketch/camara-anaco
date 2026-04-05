@@ -16,18 +16,19 @@ class Config:
     # Session
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
 
-    # SMTP Configuration - Flask-Mail (Production Ready)
-    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT', '587'))
-    MAIL_USERNAME = os.environ.get('EMAIL_USER')
+    # SMTP Configuration - Flask-Mail (Production Ready - Forced Values)
+    MAIL_SERVER = 'smtp.gmail.com'  # Forzado explícito
+    MAIL_PORT = 587  # Forzado explícito
+    MAIL_USE_TLS = True  # Forzado explícito
+    MAIL_USE_SSL = False  # Forzado explícito
+    MAIL_USERNAME = os.environ.get('EMAIL_USER')  # App Password (16 chars)
     MAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')  # App Password (16 chars)
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True') == 'True'
-    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+    MAIL_DEFAULT_SENDER = os.environ.get('EMAIL_USER')
 
     # Legacy SMTP (for backward compatibility with existing code)
-    SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
-    SMTP_PORT = int(os.environ.get('SMTP_PORT', '587'))
+    SMTP_SERVER = 'smtp.gmail.com'  # Forzado explícito
+    SMTP_PORT = 587  # Forzado explícito
     SMTP_USER = os.environ.get('EMAIL_USER')
-    SMTP_PASSWORD = os.environ.get('EMAIL_PASSWORD')  # App Password (16 chars)
-    SMTP_FROM_EMAIL = os.environ.get('SMTP_FROM_EMAIL')
-    SMTP_TO_EMAIL = os.environ.get('SMTP_TO_EMAIL')
+    SMTP_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+    SMTP_FROM_EMAIL = os.environ.get('EMAIL_USER')
+    SMTP_TO_EMAIL = os.environ.get('EMAIL_USER')

@@ -35,11 +35,23 @@ def load_user(user_id):
 # ===================== UTILITY FUNCTIONS =====================
 
 def enviar_correo_solicitud(solicitud, documentos=None):
-    """Envía notificación por correo cuando se recibe una nueva solicitud"""
+    """Envía notificación por correo cuando se recibe una nueva solicitud
+    Con tolerancia a fallos de red - nunca bloquea el flujo principal
+    """
+    # Verificar credenciales antes de intentar enviar
+    smtp_user = app.config.get('SMTP_USER') or os.environ.get('EMAIL_USER')
+    smtp_password = app.config.get('SMTP_PASSWORD') or os.environ.get('EMAIL_PASSWORD')
+    smtp_server = app.config.get('SMTP_SERVER', 'smtp.gmail.com')
+    smtp_port = app.config.get('SMTP_PORT', 587)
+
+    if not smtp_user or not smtp_password:
+        print("[MAIL] Advertencia: EMAIL_USER o EMAIL_PASSWORD no configuradas. Saltando envío.")
+        return False
+
     msg = MIMEMultipart('alternative')
     msg['Subject'] = f'Nueva Solicitud de Afiliación: {solicitud.nombre_empresa}'
-    msg['From'] = app.config['SMTP_USER']
-    msg['To'] = app.config['SMTP_TO_EMAIL']
+    msg['From'] = smtp_user
+    msg['To'] = smtp_user  # Enviar al mismo usuario configurado (App Password)
 
     # HTML body
     html_content = f"""
@@ -184,17 +196,31 @@ def enviar_correo_solicitud(solicitud, documentos=None):
                 part.add_header('Content-Disposition', f'attachment; filename= {doc.nombre_original}')
                 msg.attach(part)
 
-    # Send email
+    # Send email with fault tolerance
     try:
-        with smtplib.SMTP(app.config['SMTP_SERVER'], app.config['SMTP_PORT'], timeout=10) as server:
+        with smtplib.SMTP(smtp_server, smtp_port, timeout=10) as server:
             server.starttls()
-            server.login(app.config['SMTP_USER'], app.config['SMTP_PASSWORD'])
+            server.login(smtp_user, smtp_password)
             server.send_message(msg)
+        print("[MAIL] Correo enviado exitosamente")
         return True
+    except (OSError, smtplib.SMTPServerDisconnected, smtplib.SMTPConnectError) as e:
+        # Errores de red - registrar pero no bloquear el flujo
+        print(f"[MAIL] Error de red: {type(e).__name__} - {str(e)}")
+        import logging
+        logging.error(f"SMTP network error: {e}")
+        return False
+    except smtplib.SMTPAuthenticationError as e:
+        # Error de autenticación - más crítico para debugging
+        print(f"[MAIL] Error de autenticación: credenciales inválidas o App Password incorrecto")
+        import logging
+        logging.error(f"SMTP auth error: {e}")
+        return False
     except Exception as e:
-        print(f"Error enviando correo: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        # Cualquier otro error - registrar y continuar
+        print(f"[MAIL] Error inesperado: {type(e).__name__} - {str(e)}")
+        import logging
+        logging.error(f"SMTP unexpected error: {e}")
         return False
 
 def generate_qr_code(data, filename):
